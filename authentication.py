@@ -57,3 +57,6 @@ class AuthSystem:
 
     def close(self):
         self.db.close()
+        
+    def __str__(self):
+        return "hi"
