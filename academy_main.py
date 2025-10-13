@@ -28,8 +28,3 @@ def main():
 
 main()
 print("finished")
-print("finished")
-print("finished")
-print("finished")
-print("finished")
-print("finished")
