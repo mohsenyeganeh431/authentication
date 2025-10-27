@@ -133,6 +133,9 @@ class DataBase:
         self.con.close()
         
         
+    print("1212")
+        
+        
         
     
         
