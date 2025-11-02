@@ -15,7 +15,7 @@ class DataBase:
             host=self.host,
             user=self.user,
             password=self.password,
-            database=self.database  # 
+            database=self.database  
         )
         self.crs = self.con.cursor()
         return self.con, self.crs
@@ -94,9 +94,23 @@ class DataBase:
                 firstname VARCHAR(100),
                 lastname VARCHAR(100),
                 username VARCHAR(100) UNIQUE NOT NULL,
-                password VARCHAR(100) NOT NULL
+                password VARCHAR(100) NOT NULL,
+                role_id int,
+                foreign key (role_id) references roles(id)
+                            on delete set null
+                            on update cascade
             )
         """)
+        
+        self.crs.execute("""
+                         
+                         create table if not exist roles(
+                             
+                             id int primary key auto_increment,
+                             role_name varchar(100) unique not null
+             )
+
+         """)
 
     def close(self):
         self.con.commit()
