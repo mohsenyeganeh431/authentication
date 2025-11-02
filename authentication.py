@@ -1,4 +1,4 @@
-from academyDB import DataBase
+from DBACADEMY import DataBase
 
 # connect to database
 db = DataBase("localhost", "root", "zaq1XSW@", "academyDB")
