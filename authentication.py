@@ -4,7 +4,32 @@ from academyDB import DataBase
 db = DataBase("localhost", "root", "zaq1XSW@", "academyDB")
 db.create_database() 
 conn, crs = db.connect()
-db.create_tables()    
+db.create_tables()   
+
+
+
+    
+default = (("admin","admin","admin",1234),
+           
+               ("prof","prof","prof",1234)
+               
+)
+    
+for firstname, lastname, username, password  in default:
+        crs.execute("SELECT id FROM users WHERE username=%s", (username,))
+        
+        if not crs.fetchone():
+            
+            crs.execute("""
+                INSERT INTO users (firstname, lastname, username, password)
+                VALUES (%s, %s, %s, %s)
+            """, (firstname, lastname, username, password))
+            
+conn.commit()
+    
+
+    
+     
 
 
 class AuthSystem:

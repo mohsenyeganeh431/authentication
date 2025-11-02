@@ -21,7 +21,7 @@ def main():
                 print("Goodbye ")
                 break
             case _:
-                print(" Invalid choice!")
+                print("Invalid choice!")
 
 
 

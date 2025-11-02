@@ -15,7 +15,7 @@ class DataBase:
             host=self.host,
             user=self.user,
             password=self.password,
-            database=self.database  # ✅ دیتابیس انتخاب می‌شود
+            database=self.database  # 
         )
         self.crs = self.con.cursor()
         return self.con, self.crs
