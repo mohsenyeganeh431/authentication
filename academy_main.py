@@ -1,8 +1,7 @@
 from authentication import AuthSystem
 
 def main():
-    
-    auth1 =AuthSystem ()
+    auth1 = AuthSystem()
 
     while True:
         print("\n=== Authentication System ===")
@@ -10,7 +9,7 @@ def main():
         print("2) Login")
         print("3) Exit")
 
-        choice = input(" Enter your choice: ")
+        choice = input("Enter your choice: ")
 
         match choice:
             case "1":
@@ -18,12 +17,12 @@ def main():
             case "2":
                 auth1.login()
             case "3":
-                
                 auth1.close()
-                
+                print("Goodbye ")
                 break
             case _:
-                print("Errrrrorr!")
+                print(" Invalid choice!")
 
- 
+
+
 main()

@@ -1,17 +1,18 @@
 from academyDB import DataBase
 
+# connect to database
 db = DataBase("localhost", "root", "zaq1XSW@", "academyDB")
-db.connect() 
-db.create_database()
+db.create_database() 
+conn, crs = db.connect()
+db.create_tables()    
+
 
 class AuthSystem:
-    
     def __init__(self):
         self.db = db
-        self.conn, self.crs = self.db.connect() 
+        self.con, self.crs = self.db.connect()
 
     def sign_up(self):
-        """Sign up new user"""
         print("-------- SignUp -------")
         firstname = input("First name: ")
         lastname = input("Last name: ")
@@ -22,25 +23,21 @@ class AuthSystem:
         if password != repeat_password:
             print(" Passwords do not match!")
             return
-        
-         
 
         self.crs.execute("SELECT * FROM users WHERE username = %s", (username,))
         if self.crs.fetchone():
-            print(" This username already exists.")
+            print("This username already exists.")
             return
 
         self.crs.execute("""
             INSERT INTO users (firstname, lastname, username, password)
             VALUES (%s, %s, %s, %s)
         """, (firstname, lastname, username, password))
-        self.con.commit() 
-
-        print("Signup successful.")
+        self.con.commit()
+        print(" Signup successful.")
 
     def login(self):
-        """Login user"""
-        print("--- Login ---")
+        print("-------- Login --------")
         username = input("Username: ")
         password = input("Password: ")
 
@@ -48,20 +45,12 @@ class AuthSystem:
             "SELECT * FROM users WHERE username = %s AND password = %s",
             (username, password)
         )
-        user = self.crs.fetchone()  
+        user = self.crs.fetchone()
 
         if user:
-            print(f" Welcome !")
+            print(f" Welcome, {user[1]} {user[2]}!")
         else:
-            print(" Username or password is incorrect.")
+            print("Username or password is incorrect.")
 
     def close(self):
         self.db.close()
-        
-    def __str__(self):
-        return "hi mohsen"
-    
-
-
-        
-    print("1212")
