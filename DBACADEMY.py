@@ -9,6 +9,7 @@ class DataBase:
         self.con = None
         self.crs = None
 
+
     # connect to  MySQL
     def connect(self):
         self.con = mysql.connector.connect(
@@ -20,6 +21,7 @@ class DataBase:
         self.crs = self.con.cursor()
         return self.con, self.crs
 
+
     #create database if not exists
     def create_database(self):
         con = mysql.connector.connect(
@@ -30,6 +32,7 @@ class DataBase:
         crs = con.cursor()
         crs.execute("CREATE DATABASE IF NOT EXISTS academyDB")
         con.close()
+
 
     # create tables
     def create_tables(self):
@@ -110,12 +113,44 @@ class DataBase:
                     ON UPDATE CASCADE
             )
         """)
+ 
+        
+    def insert_default_roles(self):
+        default_roles = ["owner", "admin", "user"]
+        for role in default_roles:
+            self.crs.execute("SELECT id FROM roles WHERE role_name=%s", (role,))
+            if not self.crs.fetchone():
+                self.crs.execute("INSERT INTO roles (role_name) VALUES (%s)", (role,))
+        self.con.commit()
+
+    #  owner و admin
+    def ensure_default_accounts(self):
+        defaults = [
+            ("Owner", "System", "owner", "1234", "owner"),
+            ("Admin", "System", "admin", "1234", "admin")
+        ]
+
+        for fn, ln, username, password, role_name in defaults:
+            self.crs.execute("SELECT id FROM users WHERE username=%s", (username,))
+            if not self.crs.fetchone():
+                self.crs.execute("SELECT id FROM roles WHERE role_name=%s", (role_name,))
+                role_row = self.crs.fetchone()
+                if role_row:
+                    role_id = role_row[0]
+                    self.crs.execute("""
+                        INSERT INTO users (firstname, lastname, username, password, role_id)
+                        VALUES (%s, %s, %s, %s, %s)
+                    """, (fn, ln, username, password, role_id))
+        self.con.commit()
         
     def setup(self):
     
         self.create_database()
         self.connect()
         self.create_tables()
+        self.insert_default_roles()
+        self.ensure_default_accounts()
+        
         
 
     def close(self):
