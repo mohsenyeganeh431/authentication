@@ -2,40 +2,16 @@ from DBACADEMY import DataBase
 
 # connect to database
 db = DataBase("localhost", "root", "zaq1XSW@", "academyDB")
-db.create_database() 
+db.setup() 
 conn, crs = db.connect()
-db.create_tables()   
+  
 
-
-
-    
-default = (("admin","admin","admin",1234),
-           
-               ("prof","prof","prof",1234)
-               
-)
-    
-for firstname, lastname, username, password  in default:
-        crs.execute("SELECT id FROM users WHERE username=%s", (username,))
-        
-        if not crs.fetchone():
-            
-            crs.execute("""
-                INSERT INTO users (firstname, lastname, username, password)
-                VALUES (%s, %s, %s, %s)
-            """, (firstname, lastname, username, password))
-            
-conn.commit()
-    
-
-    
-     
 
 
 class AuthSystem:
     def __init__(self):
-        self.db = db
-        self.con, self.crs = self.db.connect()
+        self.con = conn
+        self.crs = crs 
 
     def sign_up(self):
         print("-------- SignUp -------")
@@ -53,11 +29,14 @@ class AuthSystem:
         if self.crs.fetchone():
             print("This username already exists.")
             return
+        
+        self.crs.execute("SELECT id FROM roles WHERE role_name='user'")
+        role_id  = self.crs.fetchone()[0]
 
         self.crs.execute("""
-            INSERT INTO users (firstname, lastname, username, password)
-            VALUES (%s, %s, %s, %s)
-        """, (firstname, lastname, username, password))
+            INSERT INTO users (firstname, lastname, username, password, role_id)
+            VALUES (%s, %s, %s, %s,%s)
+        """, (firstname, lastname, username, password, role_id))
         self.con.commit()
         print(" Signup successful.")
 

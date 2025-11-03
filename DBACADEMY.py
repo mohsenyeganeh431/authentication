@@ -22,14 +22,14 @@ class DataBase:
 
     #create database if not exists
     def create_database(self):
-        temp_con = mysql.connector.connect(
+        con = mysql.connector.connect(
             host=self.host,
             user=self.user,
             password=self.password
         )
-        temp_crs = temp_con.cursor()
-        temp_crs.execute("CREATE DATABASE IF NOT EXISTS academyDB")
-        temp_con.close()
+        crs = con.cursor()
+        crs.execute("CREATE DATABASE IF NOT EXISTS academyDB")
+        con.close()
 
     # create tables
     def create_tables(self):
@@ -88,29 +88,35 @@ class DataBase:
             )
         """)
 
+        #role table
         self.crs.execute("""
-            CREATE TABLE IF NOT EXISTS users(
-                ID INT PRIMARY KEY AUTO_INCREMENT,
+            CREATE TABLE IF NOT EXISTS roles (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                role_name VARCHAR(50) UNIQUE NOT NULL
+            )
+        """)
+
+        # user table
+        self.crs.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INT PRIMARY KEY AUTO_INCREMENT,
                 firstname VARCHAR(100),
                 lastname VARCHAR(100),
                 username VARCHAR(100) UNIQUE NOT NULL,
                 password VARCHAR(100) NOT NULL,
-                role_id int,
-                foreign key (role_id) references roles(id)
-                            on delete set null
-                            on update cascade
+                role_id INT,
+                FOREIGN KEY (role_id) REFERENCES roles(id)
+                    ON DELETE SET NULL
+                    ON UPDATE CASCADE
             )
         """)
         
-        self.crs.execute("""
-                         
-                         create table if not exist roles(
-                             
-                             id int primary key auto_increment,
-                             role_name varchar(100) unique not null
-             )
-
-         """)
+    def setup(self):
+    
+        self.create_database()
+        self.connect()
+        self.create_tables()
+        
 
     def close(self):
         self.con.commit()
