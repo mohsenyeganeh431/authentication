@@ -30,8 +30,6 @@ class AuthSystem:
             return
 
 
-
-        
         self.crs.execute("SELECT id FROM roles WHERE role_name='user'")
         role_id = self.crs.fetchone()[0]
 

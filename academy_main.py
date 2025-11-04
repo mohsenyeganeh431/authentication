@@ -18,7 +18,7 @@ def main():
             auth.login()  
 
         elif choice == "3":
-            print(" Goodbye! See you next time.")
+            
             auth.close()
             break
 
