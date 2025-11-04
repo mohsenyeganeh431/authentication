@@ -118,9 +118,8 @@ class DataBase:
     def insert_default_roles(self):
         default_roles = ["owner", "admin", "user"]
         for role in default_roles:
-            self.crs.execute("SELECT id FROM roles WHERE role_name=%s", (role,))
-            if not self.crs.fetchone():
-                self.crs.execute("INSERT INTO roles (role_name) VALUES (%s)", (role,))
+            #USE INSERT IGNORE  To avoid repeated errors
+            self.crs.execute("INSERT IGNORE INTO roles (role_name) VALUES (%s)", (role,))
         self.con.commit()
 
     #  owner و admin
@@ -131,20 +130,22 @@ class DataBase:
         ]
 
         for fn, ln, username, password, role_name in defaults:
-            self.crs.execute("SELECT id FROM users WHERE username=%s", (username,))
-            if not self.crs.fetchone():
-                self.crs.execute("SELECT id FROM roles WHERE role_name=%s", (role_name,))
-                role_row = self.crs.fetchone()
-                if role_row:
-                    role_id = role_row[0]
-                    self.crs.execute("""
-                        INSERT INTO users (firstname, lastname, username, password, role_id)
-                        VALUES (%s, %s, %s, %s, %s)
-                    """, (fn, ln, username, password, role_id))
+            self.crs.execute("SELECT id FROM roles WHERE role_name=%s", (role_name,))
+            role_row = self.crs.fetchone()
+            if role_row:
+                role_id = role_row[0]
+                #Use ON DUPLICATE KEY UPDATE to update if available
+                self.crs.execute("""
+                    INSERT INTO users (firstname, lastname, username, password, role_id)
+                    VALUES (%s, %s, %s, %s, %s)
+                    ON DUPLICATE KEY UPDATE 
+                        firstname=VALUES(firstname), 
+                        lastname=VALUES(lastname),
+                        role_id=VALUES(role_id)
+                """, (fn, ln, username, password, role_id))
         self.con.commit()
         
     def setup(self):
-    
         self.create_database()
         self.connect()
         self.create_tables()
