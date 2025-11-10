@@ -3,13 +3,11 @@ from DBACADEMY import DataBase
 
 # Connect to database with specified credentials
 db = DataBase("localhost", "root", "zaq1XSW@", "academyDB")
-db.setup()  # Initialize database (create tables and default data)
-conn, crs = db.connect()  # Get connection and cursor
+conn, crs = db.setup()  # get connection و cursor
 
 class AuthSystem:
-    def __init__(self):
-        # Store connection and cursor in class variables
-        self.con = conn
+    def __init__(self, conn, crs):
+        self.conn = conn
         self.crs = crs
 
     # ---------------- SignUp ----------------
@@ -141,7 +139,7 @@ class AuthSystem:
             else:
                 print("Invalid choice.")
 
-    # ---------------- Shared Operations ----------------
+    # ----------------  Operations ----------------
     def view_users(self):
         # Get all users with their roles
         self.crs.execute("""

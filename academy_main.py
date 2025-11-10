@@ -1,7 +1,7 @@
-from authentication import AuthSystem
+from authentication import AuthSystem , conn , crs
 
 def main():
-    auth = AuthSystem()
+    auth = AuthSystem(conn , crs)
 
     while True:
         print("\n=== Authentication System ===")
